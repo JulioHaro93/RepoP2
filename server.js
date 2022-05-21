@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-
+const koa = require('koa')
+const routes = require('./routes')
 class Server{
 
     constructor(){
-        this.app = express();
+        this.app = new koa();
         this.port = process.env.PORT;
         this.proyectoPath = 'api/proyecto';
 
@@ -16,16 +17,23 @@ class Server{
     }
 
     middleware(){
-            this.app.use(express.static('public'));
+
             this.app.use(cors());
 
-            this.app.use(express.json());
+            this.app.use(
+                bodyParser({
+                    multipart: true,
+                    json: true,
+                    formidable:{
+                        maxFieldZise : (100*1024*1024),
+                        maxFileSize: MAX_BODY
+                    }
+                })
+            );
 
     }
 
-    routes(){
-        this.app.use(this.proyectoPath)
-        }
+
 
     listen(){
 
@@ -35,4 +43,5 @@ class Server{
     }
 }
 
+this.app.use(routes.routes(), routes.allowedMethods())
 module.exports = Server;
