@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const Server = require('./server');
 
-const servidor = new Server();
+const app = Server.listen(8080, ()=>{
+    console.log('El servidor está corriendo en el puerto: ' + 8080);
+})
 
-servidor.listen();
+module.exports = app
