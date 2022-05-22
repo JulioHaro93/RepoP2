@@ -1,12 +1,12 @@
 const router = require('koa-router')({sensitive:true})
 
-const { getFunction, postFunction, putFunction, deleteFunction } = require('../../models/userFunctions')
+const usuariosModel = require('../../models/userFunctions')
 
 router.prefix('/api/usuarios')
 
 router.get('/', async (ctx)=>{
 
-    regresoDeAlgo = getFunction()
+    regresoDeAlgo = await usuariosModel.getFunction()
 
 
     if(regresoDeAlgo.success){
@@ -31,7 +31,7 @@ router.post('/', async (ctx, next) =>{
     const body= ctx.request.body || {}
     console.log(body)
 
-    regresaAlgo = postFunction(body)
+    regresaAlgo = await usuariosModel.postFunction(body)
 
     if(regresaAlgo.success=== true){
         ctx.body = {
@@ -54,8 +54,8 @@ router.put('/:id', async (ctx, next) =>{
     const body = ctx.request.body || {}
 
 
-
-    atrapaAlgo = putFunction(id, body.nombre, body.edad)
+    console.log(id + body)
+    atrapaAlgo = await usuariosModel.putFunction(id, body.nombre, body.edad)
     
     console.log(atrapaAlgo)
 
@@ -80,7 +80,7 @@ router.put('/:id', async (ctx, next) =>{
 router.delete('/:id', async (ctx, next) =>{
     const id = ctx.params.id
     console.log(id)
-    recibeAlgo = deleteFunction(id)
+    recibeAlgo = await usuariosModel.deleteFunction(id)
 
     if(recibeAlgo.success){
         ctx.body = {
