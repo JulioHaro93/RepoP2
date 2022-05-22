@@ -33,10 +33,13 @@ router.post('/', async (ctx, next) =>{
 
     regresaAlgo = await usuariosModel.postFunction(body)
 
+    console.log(regresaAlgo)
+
     if(regresaAlgo.success=== true){
         ctx.body = {
             success: true,
-            message: 'usuario ' + regresaAlgo.usuario[0].name + ' registrado'}
+            message: 'usuario ' + regresaAlgo.usuario.name + ' registrado',
+            usuario: regresaAlgo.usuario}
 
     }else{
         ctx.body ={
@@ -56,21 +59,20 @@ router.put('/:id', async (ctx, next) =>{
 
     console.log(id + body)
     atrapaAlgo = await usuariosModel.putFunction(id, body.nombre, body.edad)
-    
-    console.log(atrapaAlgo)
-
+    console.log(atrapaAlgo.usuario)
+    console.log(atrapaAlgo.success)
 
     if(atrapaAlgo.success){
         ctx.body = {
             success: true,
-            message: 'usuario ' + atrapaAlgo.actualiza.nombre + ' modificado e identidicado con id: '+ id,
-            usuarioModificado: atrapaAlgo.actualiza}
+            message: 'usuario ' + atrapaAlgo.nombre + ' modificado e identidicado con id: '+ id,
+            usuarioModificado: atrapaAlgo}
 
     }else{
 
         ctx.body= {success: false,
              code: 300, 
-             message: "bad request"}
+             message: "bad request" +atrapaAlgo.message}
     }
     
     

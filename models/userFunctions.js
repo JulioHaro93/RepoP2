@@ -6,68 +6,99 @@ const modelUsuario = {
 
     getFunction: async () =>{
 
-        let persona1 = {
 
-            nombre: "Julio",
-            edad: 28
-        }
+        const usuarios = await UsuariosDB.find({})
+        .then(
+            users =>{
+                return users
+            }
+        ).catch(err =>{
+            return {succes: false, code: 500, 
+            message: "Error en la base de datos en el método find()"}
+        })
 
-        let persona2 ={
 
-            nombre: "Samantha",
-            edad: 29
-        }
+        console.log(usuarios)
 
-    // let myArray = [persona1, persona2];
-
-        let myArray = [];
-
-        if(myArray.length === 0){
+        if(usuarios.length === 0){
             return{succes:false, code: 404}
         }else{
             return {success: true, 
                 code: 200,
-                usuarios: myArray}
+                usuarios: usuarios}
         }
 
     },
 
-     putFunction: async (_id, name, age) =>{
-
-        console.log(_id + name + age)
-        if(_id === undefined || name === undefined)
+     putFunction: async (i, n, a) =>{
+        //console.log(_id + name + age)
+        if(i === undefined || n === undefined)
         {
             mensaje= {mensaje: "es necesario un Id para encontrar al usuario"}
             
-            return {success: false, code: 300, mensaje}
+            return {success: false, code: 300, message: mensaje}
         }else{
 
-            actualiza = {
+            const update = { name: n, age: a };
+            const filter = { _id: i };
+        
+            const usuario = await UsuariosDB.updateOne(filter, update)
+            .then(user =>{
+               return user})
+            .catch(err => {
 
-                nombre:name,
-                edad: age + 5
+                return {success: false, 
+                    code: 500, 
+                    message: "No fue posible actualizar al usuario (catch)"
+                }
+            })
+
+            if(usuario.modifiedCount >=1){
+                return{ 
+                    success: true,
+                    code: 200,
+                    message: "Fue posible modificar al usuario con el id: " + i
+
+                }
+
+            }else{
+                return{
+                success: false,
+                code: 300,
+                message: "No fue posible actualizar el usuario porque los datos son los mismos"
+                }
             }
-        }
-    
-                
-        return {success: true, code: 200, actualiza}
             
+        }        
         
     },
 
-     postFunction:  (body)=>{
+     postFunction: async (body)=>{
 
         if(body.nombre !== undefined){
         cuerpo = {
             name: body.nombre,
             age: body.edad
         }    
-        myArray = [cuerpo]
-        console.log(myArray)
+
+
+        const usuario = new UsuariosDB(cuerpo)
+        const result = await usuario.save()
+        .then( user => {
+            return user}
+        )
+        .catch(err =>{
+            return {
+                success: false,
+                code: 500,
+                message: "error en la base de datos"
+            }
+        })
+
         
         return {success: true, 
                 code: 200, 
-                usuario: myArray}
+                usuario: result}
         }else{
             return{success:false, code: 300}
         }
@@ -79,8 +110,37 @@ const modelUsuario = {
             mensaje = "Es necesario un Id, o el Id no existe"
             return {success: false, code: 300, message: mensaje}
         }else{
-            mensaje = "el usuario con id: " + _id+ " ha sido eliminado"
-            return {success: true, code: 200, message: mensaje}
+            const result = await UsuariosDB.deleteOne({_id})
+            .then(num => {
+                return num
+            })
+            .catch(err => {
+                return { success: false,
+                code: 500,
+                message: "No se pudo eliminar al usuario con el id: "+_id
+            }
+            })
+
+
+            console.log(result)
+
+            if(result.deletedCount !==0 ){
+                return{
+                success: true,
+                code: 200,
+                message: "Se elimino correctamente"
+                }
+            }else{
+                return{
+                    success: false,
+                    code: 500,
+                    message: "no fue posible eliminar el usuario"
+                }
+                
+
+            }
+
+
         }
         
     }
