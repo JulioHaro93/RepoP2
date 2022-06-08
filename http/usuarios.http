@@ -1,0 +1,41 @@
+@baseUrl = http://localhost
+@port = 8080
+
+###
+# @name CreateUser
+POST {{baseUrl}}:{{port}}/api/usuarios
+Content-Type: application/json
+
+{
+	"nombre": "Juanito",	
+    "edad": 20,
+    "titulado" : true
+    
+}
+
+###
+# @name GetUsers
+GET  {{baseUrl}}:{{port}}/api/usuarios
+Content-Type: application/json
+
+###
+# @name getUserById
+GET {{baseUrl}}:{{port}}/api/usuarios/629e9367d4d21fc3b6c8c226
+Content-Type: application/json
+
+###
+# @name deleteUser
+DELETE {{baseUrl}}:{{port}}/api/usuarios/629e9367d4d21fc3b6c8c226
+Content-Type: application/json
+
+###
+# @name updateUserById
+PUT {{baseUrl}}:{{port}}/api/usuarios/629e9367d4d21fc3b6c8c226
+Content-Type: application/json
+
+{
+	"nombre": "Juana",	
+    "edad": 22,
+    "titulado" : true
+    
+}

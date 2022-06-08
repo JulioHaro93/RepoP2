@@ -1,12 +1,12 @@
 const router = require('koa-router')({sensitive:true})
 
-const usuariosModel = require('../../models/userFunctions')
+const escuelasModel = require('../../models/schoolFunctions')
 
-router.prefix('/api/usuarios')
+router.prefix('/api/escuelas')
 
 router.get('/', async (ctx)=>{
 
-    regresoDeAlgo = await usuariosModel.getFunction()
+    regresoDeAlgo = await escuelasModel.getFunction()
 
 
     if(regresoDeAlgo.success){
@@ -20,40 +20,42 @@ router.get('/', async (ctx)=>{
             message: "Error "+ regresoDeAlgo.code
         }
     }
+
+
+
+    
 })
 
-router.get('/:id', async (ctx, next)=>{
+router.get('/:id', async (ctx, next) =>{
+
     const identificador = ctx.params.id
-    regresoDeAlgo = await usuariosModel.funGetById(identificador)
-    
-    
+    regresoDeAlgo = await escuelasModel.funGetById(identificador)
     if(regresoDeAlgo.success){
         ctx.body= {
-        success: true,
-        data: regresoDeAlgo  
-        }
+            success: true,
+            data: regresoDeAlgo
+            }
     }else{
         ctx.body ={
-        success:false,
-        message: "Error "+ regresoDeAlgo.code
+            success:false,
+            message: "Error "+ regresoDeAlgo.code
         }
     }
 })
-
 
 router.post('/', async (ctx, next) =>{
     const body= ctx.request.body || {}
     console.log(body)
 
-    regresaAlgo = await usuariosModel.postFunction(body)
+    regresaAlgo = await escuelasModel.postFunction(body)
 
     console.log(regresaAlgo)
 
     if(regresaAlgo.success=== true){
         ctx.body = {
             success: true,
-            message: 'usuario ' + regresaAlgo.usuario.name + ' registrado',
-            usuario: regresaAlgo.usuario}
+            message: 'escuela ' + regresaAlgo.escuela.name + ' registrada',
+            escuela: regresaAlgo.escuela}
 
     }else{
         ctx.body ={
@@ -66,21 +68,16 @@ router.post('/', async (ctx, next) =>{
 })
 
 router.put('/:id', async (ctx, next) =>{
-    
     const id = ctx.params.id
     const body = ctx.request.body || {}
 
-
-    console.log(id + body)
-    atrapaAlgo = await usuariosModel.putFunction(id, body.nombre, body.edad, body.titulado)
-    
-
+    atrapaAlgo = await escuelasModel.putFunction(id, body.nombre, body.nivel, body.direccion)
     if(atrapaAlgo.success){
         ctx.body = {
             success: true,
-            message: 'usuario ' + atrapaAlgo.usuario.nombre + ' modificado e identidicado con id: '+ id,
-            usuarioModificado: atrapaAlgo,
-            usuarioMod: atrapaAlgo.usuarioMod
+            message: 'Escuela ' + atrapaAlgo.escuelaMod + ' modificado, id: '+ id,
+            escuelaModificada: atrapaAlgo,
+            escuelaMod: atrapaAlgo.escuelaMod
         }
 
     }else{
@@ -89,26 +86,19 @@ router.put('/:id', async (ctx, next) =>{
              code: 300, 
              message: "bad request" +atrapaAlgo.message}
     }
-    
-    
 })
-
 
 router.delete('/:id', async (ctx, next) =>{
     const id = ctx.params.id
-    console.log(id)
-    recibeAlgo = await usuariosModel.deleteFunction(id)
-
+    recibeAlgo = await escuelasModel.deleteFunction(id)
     if(recibeAlgo.success){
         ctx.body = {
             succes: true,
-            message: 'Usuario con el id: ' + id +' ha sido eliminado'
+            message: 'Escuela con el id: ' + id +' ha sido eliminada'
 
         }
     }else{
         ctx.body = {success: false, code: 300, mensaje: recibeAlgo.message}
     }
-    
 })
-
 module.exports = router;

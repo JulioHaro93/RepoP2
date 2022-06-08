@@ -1,0 +1,42 @@
+@baseUrl = http://localhost
+@port = 8080
+
+###
+# @name CreateSchool
+POST {{baseUrl}}:{{port}}/api/escuelas
+Content-Type: application/json
+
+{
+	"nombre": "Facultad de Ingeniería",	
+    "nivel": "facultad",
+    "direccion" : "En CU"
+    
+}
+
+###
+# @name GetSchool
+GET  {{baseUrl}}:{{port}}/api/escuelas
+Content-Type: application/json
+
+###
+# @name GetByIdSchool
+GET  {{baseUrl}}:{{port}}/api/escuelas/629b6f1c77477573f8e3d597
+Content-Type: application/json
+
+###
+# @name PutSchool
+PUT  {{baseUrl}}:{{port}}/api/escuelas/629b6f1c77477573f8e3d597
+Content-Type: application/json
+
+{
+	"nombre": "FES Aragon",	
+    "nivel": "facultad",
+    "direccion" : "bosques de arabronx"
+    
+}
+
+
+###
+# @name DeleteSchool
+DELETE   {{baseUrl}}:{{port}}/api/escuelas/629b6f1c77477573f8e3d597
+Content-Type: application/json

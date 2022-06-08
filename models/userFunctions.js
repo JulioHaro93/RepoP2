@@ -30,8 +30,38 @@ const modelUsuario = {
 
     },
 
-     putFunction: async (i, n, a) =>{
-        //console.log(_id + name + age)
+    funGetById: async (_id) =>{
+
+        if(UsuariosDB.findById(_id) === true){        
+        const usuario = await UsuariosDB.findById({_id})
+        .then(
+            users =>{
+                return users
+            }
+        ).catch(err =>{
+            return {succes: false, code: 500, 
+            message: "Error en la base de datos en el método find()"}
+        })
+
+
+        console.log(usuario)
+
+        if(usuario.name === undefined){
+            return{succes:false, code: 404}
+        }else{
+            return {success: true, 
+                code: 200,
+                usuario: usuario}
+        }
+    }else{
+        return {
+            message: "el id no existe"
+        }
+    }
+    },
+
+     putFunction: async (i, n, a, d) =>{
+        
         if(i === undefined || n === undefined)
         {
             mensaje= {mensaje: "es necesario un Id para encontrar al usuario"}
@@ -39,10 +69,11 @@ const modelUsuario = {
             return {success: false, code: 300, message: mensaje}
         }else{
 
-            const update = { name: n, age: a };
+            const update = { name: n, age: a, degree: d };
             const filter = { _id: i };
         
-            const usuario = await UsuariosDB.updateOne(filter, update)
+            const usuario = await UsuariosDB.updateOne(filter, update, {returnDocument: "after"})
+            
             .then(user =>{
                return user})
             .catch(err => {
@@ -53,12 +84,22 @@ const modelUsuario = {
                 }
             })
 
-            if(usuario.modifiedCount >=1){
+            if(usuario.name !== n){
+
+                const usuarioMod = await UsuariosDB.findOne({_id: i})
+
+                const cuerpoReg = {nombre: usuarioMod.name,
+                    edad: usuarioMod.age,
+                    titulado: usuarioMod.degree,
+                    _id: usuarioMod._id.toString()
+                }
+                
                 return{ 
                     success: true,
                     code: 200,
-                    message: "Fue posible modificar al usuario con el id: " + i
-
+                    message: "Fue posible modificar al usuario con el id: " + i,
+                    usuario: cuerpoReg
+                    
                 }
 
             }else{
@@ -78,10 +119,9 @@ const modelUsuario = {
         if(body.nombre !== undefined){
         cuerpo = {
             name: body.nombre,
-            age: body.edad
+            age: body.edad,
+            degree: body.titulado
         }    
-
-
         const usuario = new UsuariosDB(cuerpo)
         const result = await usuario.save()
         .then( user => {
